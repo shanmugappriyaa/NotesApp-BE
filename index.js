@@ -34,7 +34,7 @@ app.use("/", AppRoutes);
 
 
 
-// cron.schedule('*/60 * * * * *',getReminder)
+cron.schedule('*/60 * * * * *',getReminder)
 // })
 
 app.listen(Port, () => console.log(`Server is listening in ${Port}`));
