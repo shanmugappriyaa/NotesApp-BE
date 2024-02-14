@@ -25,8 +25,9 @@ app.all('/*', function(req, res, next) {
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://shan-notes-mgmt.netlify.app/", //"http://localhost:5173",
     credentials: true,
+    origin: "*", //"http://localhost:5173",
+    methods: ["GET", "POST"],
     optionSuccessStatus: 200,
   })
 );
