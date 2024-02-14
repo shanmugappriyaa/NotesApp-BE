@@ -10,7 +10,7 @@ const loginUser = async (req, res) => {
     console.log(user);
     if (user) {
       let passCheck = await auth.hashCompare(req.body.password, user.password);
-      console.log("passCheck=======> ", passCheck);
+      console.log("passCheck=======> ", passCheck, 'JWT-->',jwtSecret);
       if (passCheck) {
         jwt.sign(
           { userId: user._id, userName: user.userName },
@@ -18,7 +18,7 @@ const loginUser = async (req, res) => {
           {},
           (err, token) => {
             if (err) throw err;
-
+            console.log("token=======> ", token);
             res
               .cookie("token", token, { sameSite: "none", secure: true })
               .status(201)
