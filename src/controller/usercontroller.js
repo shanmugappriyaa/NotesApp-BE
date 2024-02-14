@@ -15,7 +15,7 @@ const loginUser = async (req, res) => {
         jwt.sign(
           { userId: user._id, userName: user.userName },
           jwtSecret,
-          {},
+          {expiresIn: process.env.JWT_EXPIRE},
           (err, token) => {
             if (err) throw err;
             console.log("token=======> ", token);
@@ -57,7 +57,7 @@ const registerUser = async (req, res) => {
     jwt.sign(
       { userId: createdUser._id, userName },
       jwtSecret,
-      {},
+      {expiresIn: process.env.JWT_EXPIRE},
       (err, token) => {
         if (err) throw err;
 
