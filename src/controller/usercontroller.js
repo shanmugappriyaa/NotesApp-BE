@@ -79,6 +79,7 @@ const registerUser = async (req, res) => {
 const authUser = async (req, res, next) => {
   const cookies = req.headers.cookie;
   let token = null;
+  console.log("cookies========> ", cookies);
   if (cookies) {
     const tokenCookieString = cookies
       .split(";")
