@@ -3,6 +3,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const AppRoutes = require("./src/routes");
 const cron = require("node-cron")
+const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
 const {getReminder} = require('./src/controller/notesController')
 dotenv.config();
@@ -25,10 +26,12 @@ app.all('/*', function(req, res, next) {
   });
 app.use(express.json());
 app.use(cookieParser());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
   cors({
     credentials: true,
-    origin: "https://shan-notes-mgmt.netlify.app", //"http://localhost:5173", 
+    origin:  "https://shan-notes-mgmt.netlify.app",//  "http://localhost:5173",
     methods: ["GET", "POST"],
     optionSuccessStatus: 200,
   })
