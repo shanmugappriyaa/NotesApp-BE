@@ -5,29 +5,25 @@ const jwtSecret = process.env.JWT_SECRET;
 var Cookies = require("cookies");
 
 const loginUser = async (req, res) => {
+
   try {
     let user = await userModel.findOne({ userName: req.body.userName });
     console.log(user);
     if (user) {
       let passCheck = await auth.hashCompare(req.body.password, user.password);
-      console.log("passCheck=======> ", passCheck, 'JWT-->',jwtSecret);
+      // console.log("passCheck=======> ", passCheck, "JWT-->", jwtSecret);
       if (passCheck) {
-        jwt.sign(
-          { userId: user._id, userName: user.userName },
-          jwtSecret,
-          {expiresIn: process.env.JWT_EXPIRE},
-          (err, token) => {
-            if (err) throw err;
-            console.log("token=======> ", token);
-            res
-              .cookie("token", token, { sameSite: "none", secure: true })
-              .status(201)
-              .json({
-                user,
-              });
-          }
-        );
-      } else {
+        let token = await auth.createToken({
+          id: user._id,
+          userName: user.userName,
+        });
+        res.status(200).send({
+          message: "Login Successfull",
+          token,
+          user,
+        });
+      }
+      else {
         res.status(500).send({
           message: "Invalid Password",
         });
@@ -48,27 +44,38 @@ const loginUser = async (req, res) => {
 const registerUser = async (req, res) => {
   const { userName, password, email } = req.body;
   try {
-    const hashedPassword = await auth.hashPassword(req.body.password);
-    const createdUser = await userModel.create({
-      userName,
-      password: hashedPassword,
-      email,
-    });
-    jwt.sign(
-      { userId: createdUser._id, userName },
-      jwtSecret,
-      {expiresIn: process.env.JWT_EXPIRE},
-      (err, token) => {
-        if (err) throw err;
+    let user = await userModel.findOne({ userName: req.body.userName });
+    if (!user) {
+      const hashedPassword = await auth.hashPassword(req.body.password);
+      const User = await userModel.create({
+        userName,
+        password: hashedPassword,
+        email,
+      });
+      res.status(201).send({
+        message: "User created Successfully",
+        User,
+      });
+    } else {
+      res.status(400).send({
+        message: "user already exists",
+      });
+    }
+    // jwt.sign(
+    //   { userId: createdUser._id, userName },
+    //   jwtSecret,
+    //   {expiresIn: process.env.JWT_EXPIRE},
+    //   (err, token) => {
+    //     if (err) throw err;
 
-        res
-          .cookie("token", token, { sameSite: "none", secure: true })
-          .status(201)
-          .json({
-            id: createdUser._id,
-          });
-      }
-    );
+    //     res
+    //       .cookie("token", token, { sameSite: "none", secure: true })
+    //       .status(201)
+    //       .json({
+    //         id: createdUser._id,
+    //       });
+    //   }
+    // );
   } catch (error) {
     res.status(500).send({
       message: "Internal Server Error",

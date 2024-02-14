@@ -3,23 +3,18 @@ const userModel = require("../model/User");
 const { transporter, mailOptions } = require("../common/nodeMail");
 
 const createNotes = async (req, res) => {
-  console.log("current user-> ", req.user);
 
   try {
     const { title, notes, reminder, email } = req.body;
-    console.log(title, notes, reminder);
+    
 
-    // const remindeValue = new Date();
-    // notesModel.find({
-    //   reminder: { $gte: new Date(ISODate().getTime() - 1000 * 60 * 18) },
-    // });
     if (title && notes && reminder) {
       await notesModel.create({
         title,
         notes,
         reminder,
         email,
-        createdBy: req?.user?.userId,
+        createdBy: req?.headers?.userId,
       });
 
       res.status(201).send({
@@ -79,11 +74,11 @@ const getNotesById = async (req, res) => {
   }
 };
 const getNotesByUserId = async (req, res) => {
-  console.log("user.userId==>",req.user.userId)
+  // console.log("user.userId==>",req.user.id)
   try {
     let userNotes = await notesModel
       .find(
-        { createdBy: req.user.userId },
+        { createdBy: req.headers.userId },
         { _id: 1, title: 1, notes: 1,status:1 }
       )
       .sort({ createdAt: 1 });
@@ -99,27 +94,28 @@ const getNotesByUserId = async (req, res) => {
   }
 };
 const editNotes = async (req, res) => {
+  let notesId = req.params.id;
+  if (notesId) {
+    const { title, notes } = req.body;
+    console.log("title,notes", title, notes);
+    let resNotes = await notesModel.findOne({ _id: req.params.id });
+
+    (resNotes.title = title),
+      (resNotes.notes = notes),
+      // (resNotes.reminder = reminder),
+      // (resNotes.status = status),
+      // (modifiedAt = new Date.now());
+
+      await resNotes.save();
+    console.log("resNotes-->", resNotes);
+    res.status(200).send({
+      messasge: "notes updated successfully",
+    });
+  } else {
+    res.status(400).send({ messasge: "notesId not found" });
+  }
   try {
-    let notesId = req.params.id;
-    if (notesId) {
-      const { title, notes } = req.body;
-      console.log("title,notes", title, notes);
-      let resNotes = await notesModel.findOne({ _id: req.params.id });
-
-      (resNotes.title = title),
-        (resNotes.notes = notes),
-        // (resNotes.reminder = reminder),
-        // (resNotes.status = status),
-        // (modifiedAt = new Date.now());
-
-        await resNotes.save();
-      console.log("resNotes-->", resNotes);
-      res.status(200).send({
-        messasge: "notes updated successfully",
-      });
-    } else {
-      res.status(400).send({ messasge: "notesId not found" });
-    }
+   
   } catch (error) {
     res.status(500).send({
       messasge: "Internal server Error",
