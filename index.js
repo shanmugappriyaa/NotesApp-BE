@@ -28,7 +28,7 @@ app.use(cookieParser());
 app.use(
   cors({
     credentials: true,
-    origin: "http://localhost:5173", //"https://shan-notes-mgmt.netlify.app",
+    origin: "https://shan-notes-mgmt.netlify.app", //"http://localhost:5173", 
     methods: ["GET", "POST"],
     optionSuccessStatus: 200,
   })
