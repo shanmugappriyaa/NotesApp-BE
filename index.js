@@ -9,7 +9,7 @@ const Port = process.env.PORT;
 const app = express();
 
 app.all('/*', function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Origin", "http://localhost:5173");
     res.header("Access-Control-Allow-Headers", "X-Requested-With");
     res.header(
       "Access-Control-Allow-Methods",
@@ -26,13 +26,12 @@ app.use(express.json());
 app.use(
   cors({
     credentials: true,
-    origin: "*", //"http://localhost:5173",
+    origin: "https://shan-notes-mgmt.netlify.app", //"http://localhost:5173",
     methods: ["GET", "POST"],
     optionSuccessStatus: 200,
   })
 );
 app.use("/", AppRoutes);
-
 
 
 cron.schedule('*/60 * * * * *',getReminder)
