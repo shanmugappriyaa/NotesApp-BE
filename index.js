@@ -33,8 +33,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(
   cors({
     credentials: true,
-    origin:"http://localhost:5173",
-    //  "https://shan-notes-mgmt.netlify.app"
+    origin: "https://shan-notes-mgmt.netlify.app",
     methods: ["GET", "POST", "OPTIONS", "PUT", "PATCH", "DELETE"],
     optionSuccessStatus: 200,
   })
